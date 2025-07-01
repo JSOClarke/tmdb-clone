@@ -1,11 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-import SearchBar from './components/SearchBar';
 import MovieCard from './components/MovieCard';
-import DetailPage from './components/DetailPage'; // We will create this component next
+import DetailPage from './components/DetailPage';
+import Layout from './components/Layout'; // Import the new Layout component
 import './App.css';
+import EpisodeDetailPage from './components/EpisodeDetailPage'
+import TorrentResultsPage from './components/TorrentResultsPage';
+import MovieTorrentResultsPage from './components/MovieTorrentResultsPage';
 
-const API_KEY = '641b5a707de7a5e2fb30aaf150880960'; // Replace with your actual TMDB API key
+const API_KEY = '641b5a707de7a5e2fb30aaf150880960';
 const API_BASE_URL = 'https://api.themoviedb.org/3';
 
 function App() {
@@ -74,59 +77,64 @@ function App() {
     }
   };
 
+  // Home page component
+  const HomePage = () => (
+    <>
+      {loading && <p>Loading...</p>}
+      {error && <p className="error-message">{error}</p>}
+      
+      {/* Display search results if there's a search query */}
+      {searchQuery && movies.length > 0 && (
+        <div className="search-results">
+          <h2>Search Results for "{searchQuery}"</h2>
+          <div className="movie-list">
+            {movies.map((movie) => (
+              <MovieCard key={movie.id} movie={movie} />
+            ))}
+          </div>
+        </div>
+      )}
+      
+      {/* Display trending content when not searching */}
+      {!searchQuery && (
+        <>
+          {trendingMovies.length > 0 && (
+            <div className="trending-section">
+              <h2>Trending Movies</h2>
+              <div className="movie-list">
+                {trendingMovies.map((movie) => (
+                  <MovieCard key={movie.id} movie={movie} />
+                ))}
+              </div>
+            </div>
+          )}
+          
+          {trendingTvShows.length > 0 && (
+            <div className="trending-section">
+              <h2>Trending TV Shows</h2>
+              <div className="movie-list">
+                {trendingTvShows.map((show) => (
+                  <MovieCard key={show.id} movie={show} />
+                ))}
+              </div>
+            </div>
+          )}
+        </>
+      )}
+    </>
+  );
+
   return (
     <Router>
-      <div className="App">
-        <header className="App-header">
-          <h1>Heretic - TMDB Clone</h1>
-          <SearchBar onSearch={handleSearch} />
-        </header>
-        <main>
-          <Routes>
-            <Route path="/" element={
-              <>
-                {loading && <p>Loading...</p>}
-                {error && <p className="error-message">{error}</p>}
-
-                {searchQuery ? (
-                  // Display search results
-                  !loading && !error && movies.length === 0 && (
-                    <p className="no-results-message">No results found for "{searchQuery}".</p>
-                  )
-                ) : (
-                  // Display trending content
-                  !loading && !error && (
-                    <>
-                      <h2>Trending Movies</h2>
-                      <div className="movie-list">
-                        {trendingMovies.map(movie => (
-                          <MovieCard key={movie.id} movie={movie} />
-                        ))}
-                      </div>
-
-                      <h2>Trending TV Shows</h2>
-                      <div className="movie-list">
-                        {trendingTvShows.map(tvShow => (
-                          <MovieCard key={tvShow.id} movie={tvShow} />
-                        ))}
-                      </div>
-                    </>
-                  )
-                )}
-
-                {searchQuery && !loading && !error && movies.length > 0 && (
-                  <div className="movie-list">
-                    {movies.map(movie => (
-                      <MovieCard key={movie.id} movie={movie} />
-                    ))}
-                  </div>
-                )}
-              </>
-            } />
-            <Route path="/details/:mediaType/:id" element={<DetailPage API_KEY={API_KEY} API_BASE_URL={API_BASE_URL} />} />
-          </Routes>
-        </main>
-      </div>
+      <Layout onSearch={handleSearch} searchQuery={searchQuery} movies={movies} loading={loading} error={error}>
+        <Routes>
+          <Route path="/" element={<HomePage />} />
+          <Route path="/details/:mediaType/:id" element={<DetailPage API_KEY={API_KEY} API_BASE_URL={API_BASE_URL} />} />
+          <Route path="/episode/:airDate" element={<EpisodeDetailPage />} />
+          <Route path="/torrent-results/:seriesId/:seasonNumber/:episodeNumber" element={<TorrentResultsPage API_KEY={API_KEY} API_BASE_URL={API_BASE_URL} />} />
+          <Route path="/movie-torrent-results/:movieId" element={<MovieTorrentResultsPage API_KEY={API_KEY} API_BASE_URL={API_BASE_URL} />} />
+        </Routes>
+      </Layout>
     </Router>
   );
 }

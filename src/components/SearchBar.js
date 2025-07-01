@@ -90,7 +90,7 @@ function SearchBar({ onSearch }) {
       <form onSubmit={handleSearch} className="search-bar">
         <input
           type="text"
-          placeholder="Search for movies or TV shows..."
+          placeholder="Search for Media..."
           value={query}
           onChange={handleInputChange}
           onFocus={() => query.length > 2 && setShowSuggestions(true)}
