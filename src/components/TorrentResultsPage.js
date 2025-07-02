@@ -10,6 +10,7 @@ const TorrentResultsPage = ({ API_KEY, API_BASE_URL }) => {
   const [error, setError] = useState(null);
   const [seriesName, setSeriesName] = useState('');
   const [selectedResolution, setSelectedResolution] = useState('All'); // New state for resolution filter
+  const SERVER_API_PORT = 3001;
 
   useEffect(() => {
     const fetchSeriesDetailsAndTorrents = async () => {
@@ -30,7 +31,7 @@ const TorrentResultsPage = ({ API_KEY, API_BASE_URL }) => {
         console.log('Searching for torrents with query:', searchQuery);
 
         // Fetch torrents from your local server
-        const torrentsResponse = await axios.get(`http://localhost:3000/search?q=${encodeURIComponent(searchQuery)}`);
+        const torrentsResponse = await axios.get(`http://localhost:${SERVER_API_PORT}/search?q=${encodeURIComponent(searchQuery)}`);
         setTorrents(torrentsResponse.data.data);
 
       } catch (err) {

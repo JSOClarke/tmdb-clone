@@ -1,0 +1,9 @@
+Error playing torrent: 
+Object { message: "Request failed with status code 500", name: "AxiosError", code: "ERR_BAD_RESPONSE", config: {…}, request: XMLHttpRequest, response: {…}, status: 500, stack: "", … }
+<anonymous code>:1:145535
+    overrideMethod <anonymous code>:1
+    handlePlayClick TorrentCard.js:16
+    React 13
+    js index.js:7
+    factory react refresh:37
+    Webpack 3
